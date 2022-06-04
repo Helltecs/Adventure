@@ -1,8 +1,6 @@
 import random
-import time
-import tkinter
-from tkinter import ttk
-import pickle
+
+
 
 class Weapon:
     def __init__(self, name, dmg):
@@ -125,21 +123,19 @@ user_input.pack()
 window.mainloop()
 
 #Umgebungen, fängt an mit "Du befindest dich ", verwende loc(string)
-forest = "in einem Wald."
-cave = "in einer Höhle."
-beach = "am Strand."
 
-player = None
+
+
 dagger = Weapon("Rückenstecher", 3)
 monster = Monster("Ork", "Koklik", 10, 1, 1, None, None)
 
-inventory = []
+
 characters = []
 
 start_up = True
 begrüßung = None
 save = None
-location = forest
+
 
 while True: #Hauptschleife
 
@@ -245,10 +241,6 @@ while True: #Hauptschleife
             print(f"\nGlückwunsch, du hast den unschuldigen {monster.name} getötet. :(\n")
 
     else:
-        save_data = (player, inventory, location)
-        save = open("save.pickle","wb")
-        pickle.dump(save_data, save)
-        time.sleep(0.5)
-        save.close()
+
         break
 
