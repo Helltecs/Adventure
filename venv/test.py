@@ -63,5 +63,5 @@ class MainGUI:
 window = tkinter.Tk()
 program = MainGUI(window)
 
-# Teste Git Version Control
+
 program.window.mainloop()
