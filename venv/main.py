@@ -2,32 +2,9 @@ import random
 
 
 
-class Weapon:
-    def __init__(self, name, dmg):
-        self.name = name
-        self.dmg = dmg
 
-    def upgrade(self):
-        self.dmg += 1
 
-class Person:
-    def __init__(self, type, name: str, hp: int, strg, defe, equipW: Weapon, equipA):
-        self.type = type
-        self.name = name
-        self.hp = hp
-        self.strg = strg
-        self.defe = defe
-        self.equipW = equipW
-        self.equipA = equipA
 
-    def __str__(self):
-        return self.name
-
-    def equip(self, weapon_or_amor):
-        if weapon_or_amor == Weapon:
-            self.equipW = weapon_or_amor
-        else:
-            self.equipA = weapon_or_amor
 
 class Monster(Person):
    pass
@@ -147,12 +124,7 @@ while True: #Hauptschleife
         temp = input("Hast du dieses Adventure schon einmal gespielt? (Y/N)\n")
 
         if temp.upper() == "Y":
-            save = open("save.pickle", "rb")
-            save_content = pickle.load(save)
-            save.close()
-            player = save_content[0]
-            inventory = save_content[1]
-            location = save_content[2]
+
             print(f"Wilkommen zurück {player}!")
             begrüßung = False
             start_up = False
