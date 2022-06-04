@@ -2,6 +2,37 @@ import tkinter
 from tkinter import ttk
 import pickle
 import time
+import random
+
+
+class Weapon:
+    def __init__(self, name, dmg):
+        self.name = name
+        self.dmg = dmg
+
+    def upgrade(self):
+        self.dmg += 1
+
+
+class Person:
+    def __init__(self, type, name: str, hp: int, strg, defe, equipW: Weapon, equipA):
+        self.type = type
+        self.name = name
+        self.hp = hp
+        self.strg = strg
+        self.defe = defe
+        self.equipW = equipW
+        self.equipA = equipA
+
+    def __str__(self):
+        return self.name
+
+    def equip(self, weapon_or_amor):
+        if weapon_or_amor == Weapon:
+            self.equipW = weapon_or_amor
+        else:
+            self.equipA = weapon_or_amor
+
 
 class MainGUI:
     def __init__(self, mainWindow):
@@ -35,7 +66,7 @@ class MainGUI:
         self.close_button.grid(column=1, row=4, columnspan=2)
         self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
         self.save_button.grid(column=1, row=1, sticky="e")
-        self.load_button = ttk.Button(self.mainframe, text="Laden", command=self.save)
+        self.load_button = ttk.Button(self.mainframe, text="Laden", command=self.load)
         self.load_button.grid(column=2, row=1, sticky="w")
 
         self.window.columnconfigure(0, weight=1)
@@ -68,7 +99,10 @@ class MainGUI:
         save.close()
 
     def load(self):
-        pass
+        save = open("save.pickle", "rb")
+        save_content = pickle.load(save)
+        save.close()
+        return save_content
 
 
 #Global Variables
