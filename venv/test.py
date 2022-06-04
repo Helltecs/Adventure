@@ -60,7 +60,8 @@ class MainGUI:
         self.user_input.bind("<Return>", lambda e: self.submit_button.invoke())
         self.user_input.grid(column=1, row=2, columnspan=2)
 
-        self.submit_button = ttk.Button(self.mainframe, text="Bestätigen", command=self.update_display)
+        self.submit_button = ttk.Button(self.mainframe, text="Bestätigen",
+                                        command=lambda m=self.user_input.get(): self.update_display(m))
         self.submit_button.grid(column=1, row=3, columnspan=2)
         self.close_button = ttk.Button(self.mainframe, text="Programm schließen", command=self.window.destroy)
         self.close_button.grid(column=1, row=4, columnspan=2)
@@ -87,8 +88,7 @@ class MainGUI:
         self.mainframe.rowconfigure(0, weight=1)
         self.frame.columnconfigure(0, minsize=len(self.display.get()))
 
-    def update_display(self):
-        text = self.user_input.get()
+    def update_display(self, text: str):
         self.display.set(text)
 
     def save(self):
@@ -102,6 +102,7 @@ class MainGUI:
         save = open("save.pickle", "rb")
         save_content = pickle.load(save)
         save.close()
+        self.update_display(f"Wilkommen zurück {save_content[0]}!")
         return save_content
 
 
