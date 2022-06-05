@@ -48,8 +48,7 @@ def choose_location():
             time.sleep(1)
     return location
 
-def loc(location):
-    print(f"Du befindest dich {location}")
+
 
 def ValidateInt(in_Here):
         try:
@@ -129,7 +128,7 @@ while True: #Hauptschleife
             begrüßung = False
             start_up = False
         else:
-            player = Person("player", input("Spielername: "), 100, 5, 5, None, None)
+            player =
             inventory = [dagger]
             begrüßung = True
             start_up = False

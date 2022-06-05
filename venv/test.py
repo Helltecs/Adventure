@@ -36,6 +36,8 @@ class Person:
 
 class MainGUI:
     def __init__(self, mainWindow):
+        self.first_load = True
+
         self.window = mainWindow
         self.window.geometry("900x450")
         self.window.title("Text RPG")
@@ -56,17 +58,10 @@ class MainGUI:
         self.labelInv = ttk.Label(self.frameInv, textvariable=self.displayInv, padding=5)
         self.labelInv.grid(column=0, sticky="n")
 
-        self.user_input = ttk.Entry(self.mainframe, width=50, )
-        self.user_input.bind("<Return>", lambda e: self.submit_button.invoke())
-        self.user_input.grid(column=1, row=2, columnspan=2)
-
-        self.submit_button = ttk.Button(self.mainframe, text="Bestätigen",
-                                        command=lambda m=self.user_input.get(): self.update_display(m))
-        self.submit_button.grid(column=1, row=3, columnspan=2)
         self.close_button = ttk.Button(self.mainframe, text="Programm schließen", command=self.window.destroy)
         self.close_button.grid(column=1, row=4, columnspan=2)
-        self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
-        self.save_button.grid(column=1, row=1, sticky="e")
+        self.new_game_button = ttk.Button(self.mainframe, text="Neues Spiel", command=self.new_game)
+        self.new_game_button.grid(column=1, row=1, sticky="e")
         self.load_button = ttk.Button(self.mainframe, text="Laden", command=self.load)
         self.load_button.grid(column=2, row=1, sticky="w")
 
@@ -88,6 +83,33 @@ class MainGUI:
         self.mainframe.rowconfigure(0, weight=1)
         self.frame.columnconfigure(0, minsize=len(self.display.get()))
 
+    def new_game(self):
+        self.user_input = ttk.Entry(self.mainframe, width=50)
+        self.user_input.bind("<Return>", lambda e: self.submit_button.invoke())
+        self.user_input.focus()
+        self.user_input.grid(column=1, row=2, columnspan=2)
+
+        self.submit_button = ttk.Button(self.mainframe, text="Bestätigen",
+                                        command=self.get_player_name)
+        self.submit_button.grid(column=1, row=3, columnspan=2)
+        self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
+        self.save_button.grid(column=1, row=1, sticky="e")
+
+        self.load_button.configure(state="disabled")
+
+        self.display.set("Wilkommen!\n\nBitte trage deinen Namen unten in das Feld ein und bestätige deine Eingabe.")
+        self.user_input.insert(0, "Hier Name eintragen")
+
+        self.new_game_button.forget()
+
+    def get_player_name(self):
+        global player
+        player = Person("player", self.user_input.get(), 100, 5, 5, None, None)
+        self.display.set(f"Herzlich wilkommen {player}!\n\n")
+        self.display_initial_prompt()
+        self.user_input.destroy()
+        self.submit_button.destroy()
+
     def update_display(self, text: str):
         self.display.set(text)
 
@@ -97,13 +119,33 @@ class MainGUI:
         pickle.dump(save_data, save)
         time.sleep(0.5)
         save.close()
+        self.load_button.configure(state="active")
 
     def load(self):
         save = open("save.pickle", "rb")
         save_content = pickle.load(save)
         save.close()
-        self.update_display(f"Wilkommen zurück {save_content[0]}!")
-        return save_content
+        global player
+        player = save_content[0]
+        global inventory
+        inventory = save_content[1]
+        global location
+        loacation = save_content[2]
+
+        self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
+        self.save_button.grid(column=1, row=1, sticky="e")
+
+        self.new_game_button.forget()
+
+        if self.first_load:
+            self.first_load = False
+            self.update_display(f"Wilkommen zurück {player}!\n\n")
+            self.display_initial_prompt()
+        else:
+            self.update_display("Du hast erneut geladen.")
+
+    def display_initial_prompt(self):
+            self.display.set(self.display.get() + f"Du befindest dich {location}")
 
 
 #Global Variables
@@ -120,6 +162,4 @@ location = forest
 #Eigentlicher Programmablauf
 window = tkinter.Tk()
 program = MainGUI(window)
-
-
 program.window.mainloop()
