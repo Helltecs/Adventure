@@ -54,7 +54,7 @@ class MainGUI:
         self.label.grid(column=0, row=0, sticky="nwe")
 
         self.displayInv = tkinter.StringVar()
-        self.displayInv.set("Inventar Teststring")
+        self.displayInv.set("Inventar")
         self.labelInv = ttk.Label(self.frameInv, textvariable=self.displayInv, padding=5)
         self.labelInv.grid(column=0, sticky="n")
 
@@ -137,6 +137,8 @@ class MainGUI:
 
         self.new_game_button.forget()
 
+        self.update_inventory()
+
         if self.first_load:
             self.first_load = False
             self.update_display(f"Wilkommen zurück {player}!\n\n")
@@ -147,15 +149,28 @@ class MainGUI:
     def display_initial_prompt(self):
             self.display.set(self.display.get() + f"Du befindest dich {location}")
 
+    def update_inventory(self):
+        count = 0
+        inventory_button_list = []
+        self.variable_list = []
+        for item in inventory:
+            self.variable_list.append(tkinter.StringVar())
+            inventory_button_list.append(ttk.Checkbutton(self.frameInv, text=item.name, variable=self.variable_list[count],
+                                                         command=lambda: player.equip(item)))
+            inventory_button_list[count].grid(column=0, row=count+1, sticky="we")
+            count += 1
+
 
 #Global Variables
 ##############
+dagger = Weapon("Rückenstecher", 3)
+
 forest = "in einem Wald."
 cave = "in einer Höhle."
 beach = "am Strand."
 
 player = None
-inventory = []
+inventory = [dagger]
 location = forest
 ##############
 
