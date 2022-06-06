@@ -14,29 +14,72 @@ class Weapon:
         self.dmg += 1
 
 
+class Armor:
+    def __init__(self, name, defe):
+        self.name = name
+        self.defe = defe
+
+    def upgrade(self):
+        self.defe += 1
+
+
 class Person:
-    def __init__(self, type, name: str, hp: int, strg, defe, equipW: Weapon, equipA):
+    def __init__(self, type, name: str, hp: int, strg, defe, equippedW: Weapon, equippedA: Armor):
         self.type = type
         self.name = name
         self.hp = hp
         self.strg = strg
         self.defe = defe
-        self.equipW = equipW
-        self.equipA = equipA
+        self.equippedW = equippedW
+        self.equippedW2 = None
+        self.equippedA = equippedA
 
     def __str__(self):
         return self.name
 
-    def equip(self, weapon_or_amor):
-        if weapon_or_amor == Weapon:
-            self.equipW = weapon_or_amor
+    def equip_else_unequip(self, weapon_or_armor):
+        print("Aufgerufen")
+        if type(weapon_or_armor) == type(dagger) and self.equippedW == None:
+            self.equippedW = weapon_or_armor
+            print("Ausgeführt 1")
+        elif type(weapon_or_armor) == type(dagger) and self.equippedW2 == None:
+            self.equippedW2 = weapon_or_armor
+            print("Ausgeführt 2")
+        elif type(weapon_or_armor) == type(tatters) and self.equippedA == None:
+            self.equippedA = weapon_or_armor
+            print("Ausgeführt 4")
         else:
-            self.equipA = weapon_or_amor
+            self.unequip(weapon_or_armor)
+            print("Ausgeführt 5")
+        program.update_inventory()
+        print(self.equippedW, self.equippedW2, self.equippedA)
+
+    def unequip(self, weapon_or_armor):
+        print("Ebenfalls aufgerufen")
+        if type(weapon_or_armor) == type(dagger):
+            if self.equippedW != None:
+                if weapon_or_armor.name == self.equippedW.name:
+                    self.equippedW = None
+                    print("Ausgeführt 6")
+                else:
+                    pass
+            elif self.equippedW2 != None:
+                self.equippedW2 = None
+                print("Ausgeführt 7")
+            else:
+                print("Ausgeführt 8")
+                pass
+        else:
+            self.equippedA = None
+            print("Ausgeführt 9")
+        print(self.equippedW, self.equippedW2, self.equippedA)
 
 
 class MainGUI:
     def __init__(self, mainWindow):
         self.first_load = True
+        self.inventory_button_list = []
+        self.variable_list = []
 
         self.window = mainWindow
         self.window.geometry("900x450")
@@ -54,7 +97,7 @@ class MainGUI:
         self.label.grid(column=0, row=0, sticky="nwe")
 
         self.displayInv = tkinter.StringVar()
-        self.displayInv.set("Inventar Teststring")
+        self.displayInv.set("Inventar")
         self.labelInv = ttk.Label(self.frameInv, textvariable=self.displayInv, padding=5)
         self.labelInv.grid(column=0, sticky="n")
 
@@ -101,6 +144,7 @@ class MainGUI:
         self.user_input.insert(0, "Hier Name eintragen")
 
         self.new_game_button.forget()
+        self.update_inventory()
 
     def get_player_name(self):
         global player
@@ -137,6 +181,8 @@ class MainGUI:
 
         self.new_game_button.forget()
 
+        self.update_inventory()
+
         if self.first_load:
             self.first_load = False
             self.update_display(f"Wilkommen zurück {player}!\n\n")
@@ -147,15 +193,60 @@ class MainGUI:
     def display_initial_prompt(self):
             self.display.set(self.display.get() + f"Du befindest dich {location}")
 
+    def update_inventory(self):
+        count = 0
+        if len(inventory) != len(self.inventory_button_list):
+            for item in inventory:
+                temp = tkinter.IntVar()
+                temp.set(0)
+                self.variable_list.append(temp)
+                self.inventory_button_list.append(ttk.Checkbutton(self.frameInv, text=item.name,
+                                                                  variable=self.variable_list[count],
+                                                                  command=self.button_checked))
+                self.inventory_button_list[count].grid(row=count + 1, sticky="ew")
+                count += 1
+        added = 0
+        for value in self.variable_list:
+            added += value.get()
+        count = 0
+        for box in self.inventory_button_list:
+            if added >= 2 and self.variable_list[count].get() == 0:
+                box.configure(state="disabled")
+            else:
+                box.configure(state="active")
+            count += 1
+
+    def button_checked(self):
+        count = 0
+        for box in self.inventory_button_list:
+            if self.variable_list[count].get() == 1:
+                for item in inventory:
+                    if item.name == box["text"]:
+                        player.equip_else_unequip(item)
+                    else:
+                        continue
+            else:
+                for item in inventory:
+                    if item.name == box["text"]:
+                        player.unequip(item)
+            count += 1
 
 #Global Variables
 ##############
+dagger = Weapon("Rückenstecher", 3)
+testw1 = Weapon("Test 1", 3)
+testw2 = Weapon("Test 2", 3)
+testw3 = Weapon("Test 3", 3)
+testw4 = Weapon("Test 4", 3)
+
+tatters = Armor("Lumpen", 1)
+
 forest = "in einem Wald."
 cave = "in einer Höhle."
 beach = "am Strand."
 
 player = None
-inventory = []
+inventory = [dagger, tatters, testw1, testw2, testw3, testw4]
 location = forest
 ##############
 

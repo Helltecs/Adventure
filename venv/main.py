@@ -171,7 +171,7 @@ while True: #Hauptschleife
                 bool = False
                 bool2 = False
                 temp = int(temp) - 1
-                player.equip(inventory[temp])
+                player.equip_else_unequip(inventory[temp])
 
             elif temp == 2:
                 bool = False
