@@ -90,6 +90,8 @@ class MainGUI:
         self.frame.grid(column=1, row=0, sticky="nwe", pady=(0, 5), columnspan=2)
         self.frameInv = ttk.Frame(self.mainframe, relief="groove", padding=5)
         self.frameInv.grid(column=0, row=0, sticky="n")
+        self.location_frame = ttk.Frame(self.mainframe, relief="ridge", padding=5)
+        self.location_frame.grid(column=1, row=1, sticky="n", columnspan=2)
 
         self.display = tkinter.StringVar()
         self.display.set("Wilkommen, dies ist ein deutlich längerer String zum testen.")
@@ -102,11 +104,17 @@ class MainGUI:
         self.labelInv.grid(column=0, sticky="n")
 
         self.close_button = ttk.Button(self.mainframe, text="Programm schließen", command=self.window.destroy)
-        self.close_button.grid(column=1, row=4, columnspan=2)
+        self.close_button.grid(column=1, row=5, columnspan=2)
         self.new_game_button = ttk.Button(self.mainframe, text="Neues Spiel", command=self.new_game)
-        self.new_game_button.grid(column=1, row=1, sticky="e")
+        self.new_game_button.grid(column=1, row=2, sticky="e")
         self.load_button = ttk.Button(self.mainframe, text="Laden", command=self.load)
-        self.load_button.grid(column=2, row=1, sticky="w")
+        self.load_button.grid(column=2, row=2, sticky="w")
+        self.forest_button = ttk.Button(self.location_frame, text="Wald", command=lambda: self.change_location("forest"))
+        self.forest_button.grid(column=0, row=0, sticky="we")
+        self.cave_button = ttk.Button(self.location_frame, text="Höhle", command=lambda: self.change_location("cave"))
+        self.cave_button.grid(column=1, row=0, sticky="we")
+        self.beach_button = ttk.Button(self.location_frame, text="Strand", command=lambda: self.change_location("beach"))
+        self.beach_button.grid(column=2, row=0, sticky="we")
 
         self.window.columnconfigure(0, weight=1)
         self.window.rowconfigure(0, weight=1)
@@ -130,13 +138,13 @@ class MainGUI:
         self.user_input = ttk.Entry(self.mainframe, width=50)
         self.user_input.bind("<Return>", lambda e: self.submit_button.invoke())
         self.user_input.focus()
-        self.user_input.grid(column=1, row=2, columnspan=2)
+        self.user_input.grid(column=1, row=3, columnspan=2)
 
         self.submit_button = ttk.Button(self.mainframe, text="Bestätigen",
                                         command=self.get_player_name)
-        self.submit_button.grid(column=1, row=3, columnspan=2)
+        self.submit_button.grid(column=1, row=4, columnspan=2)
         self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
-        self.save_button.grid(column=1, row=1, sticky="e")
+        self.save_button.grid(column=1, row=2, sticky="e")
 
         self.load_button.configure(state="disabled")
 
@@ -174,10 +182,10 @@ class MainGUI:
         global inventory
         inventory = save_content[1]
         global location
-        loacation = save_content[2]
+        location = save_content[2]
 
         self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
-        self.save_button.grid(column=1, row=1, sticky="e")
+        self.save_button.grid(column=1, row=2, sticky="e")
 
         self.new_game_button.forget()
 
@@ -230,6 +238,17 @@ class MainGUI:
                     if item.name == box["text"]:
                         player.unequip(item)
             count += 1
+
+    def change_location(self, goal):
+        global location
+        if goal == "forest":
+            location = forest
+        elif goal == "cave":
+            location = cave
+        elif goal == "beach":
+            location = beach
+        self.update_display(f"Du befindest dich {location}" + "\n\nWas möchtest du tun?")
+
 
 #Global Variables
 ##############
