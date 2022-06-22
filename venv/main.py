@@ -6,7 +6,7 @@ import random
 
 
 
-class Monster(Person):
+class Monster:
    pass
 
 def battle(strg, dmg, defe):
@@ -71,39 +71,10 @@ def ValidateRange(list, int):
         return False
 
 
-window = tkinter.Tk()
-window.geometry("900x450")
-window.title("Text RPG")
 
-frame = ttk.Frame(window, relief="sunken", padding=5)
-frame.pack(side="top")
-frameInv = ttk.Frame(window, relief="groove", padding=5)
-frameInv.pack(anchor="nw", fill="y", expand=True)
-
-display = tkinter.StringVar()
-display.set("Wilkommen, dies ist ein deutlich längerer String zum testen.\n\n\n\n\n\n\n\n")
-label = ttk.Label(frame, textvariable=display, padding=5)
-label.grid(column=2, row=1)
-
-displayInv = tkinter.StringVar()
-displayInv.set("Invetar Teststring")
-labelInv = ttk.Label(frameInv, textvariable=displayInv, padding=5)
-labelInv.pack(side="top")
-
-close_button = ttk.Button(window, text="Programm schließen", command=window.destroy)
-close_button.pack(side="bottom", pady=20)
-
-user_input = ttk.Entry(window, width=50)
-user_input.pack()
-
-window.mainloop()
 
 #Umgebungen, fängt an mit "Du befindest dich ", verwende loc(string)
 
-
-
-dagger = Weapon("Rückenstecher", 3)
-monster = Monster("Ork", "Koklik", 10, 1, 1, None, None)
 
 
 characters = []
@@ -128,7 +99,7 @@ while True: #Hauptschleife
             begrüßung = False
             start_up = False
         else:
-            player =
+            player = None
             inventory = [dagger]
             begrüßung = True
             start_up = False
