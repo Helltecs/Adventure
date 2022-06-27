@@ -109,11 +109,14 @@ class MainGUI:
         self.new_game_button.grid(column=1, row=2, sticky="e")
         self.load_button = ttk.Button(self.mainframe, text="Laden", command=self.load)
         self.load_button.grid(column=2, row=2, sticky="w")
-        self.forest_button = ttk.Button(self.location_frame, text="Wald", command=lambda: self.change_location("forest"))
+        self.forest_button = ttk.Button(self.location_frame, text="Wald", command=lambda: self.change_location("forest"),
+                                        state="disabled")
         self.forest_button.grid(column=0, row=0, sticky="we")
-        self.cave_button = ttk.Button(self.location_frame, text="Höhle", command=lambda: self.change_location("cave"))
+        self.cave_button = ttk.Button(self.location_frame, text="Höhle", command=lambda: self.change_location("cave"),
+                                      state="disabled")
         self.cave_button.grid(column=1, row=0, sticky="we")
-        self.beach_button = ttk.Button(self.location_frame, text="Strand", command=lambda: self.change_location("beach"))
+        self.beach_button = ttk.Button(self.location_frame, text="Strand", command=lambda: self.change_location("beach"),
+                                       state="disabled")
         self.beach_button.grid(column=2, row=0, sticky="we")
 
         self.window.columnconfigure(0, weight=1)
@@ -151,7 +154,7 @@ class MainGUI:
         self.display.set("Wilkommen!\n\nBitte trage deinen Namen unten in das Feld ein und bestätige deine Eingabe.")
         self.user_input.insert(0, "Hier Name eintragen")
 
-        self.new_game_button.forget()
+        self.new_game_button.destroy()
         self.update_inventory()
 
     def get_player_name(self):
@@ -161,6 +164,10 @@ class MainGUI:
         self.display_initial_prompt()
         self.user_input.destroy()
         self.submit_button.destroy()
+
+        self.forest_button.configure(state="active")
+        self.cave_button.configure(state="active")
+        self.beach_button.configure(state="active")
 
     def update_display(self, text: str):
         self.display.set(text)
@@ -187,7 +194,11 @@ class MainGUI:
         self.save_button = ttk.Button(self.mainframe, text="Speichern", command=self.save)
         self.save_button.grid(column=1, row=2, sticky="e")
 
-        self.new_game_button.forget()
+        self.forest_button.configure(state="active")
+        self.cave_button.configure(state="active")
+        self.beach_button.configure(state="active")
+
+        self.new_game_button.destroy()
 
         self.update_inventory()
 
@@ -248,6 +259,88 @@ class MainGUI:
         elif goal == "beach":
             location = beach
         self.update_display(f"Du befindest dich {location}" + "\n\nWas möchtest du tun?")
+        self.choose_action()
+
+    def choose_action(self):
+        self.forest_button.grid_remove()
+        self.cave_button.grid_remove()
+        self.beach_button.grid_remove()
+
+        self.discover_button = ttk.Button(self.location_frame, text="Umsehen", command=self.discover)
+        self.discover_button.grid(column=0, row=0)
+        self.nothing_button = ttk.Button(self.location_frame, text="Nichts tun", command=self.restore_location_buttons)
+        self.nothing_button.grid(column=1, row=0)
+
+    def restore_location_buttons(self):
+        self.discover_button.destroy()
+        self.nothing_button.destroy()
+
+        self.forest_button.grid()
+        self.cave_button.grid()
+        self.beach_button.grid()
+
+    def discover(self):
+        self.discover_button.destroy()
+        self.nothing_button.destroy()
+
+        dice = random.randint(1, 11)
+
+        if location == forest:
+            self.update_display("Dies ist ein Testevent für den Wald. Hier ist noch nicht viel zu sehen.\n\n")
+            if dice <= 3:
+                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
+                self.restore_location_buttons()
+            elif 6 >= dice > 3:
+                #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
+                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
+                dice = random.randint(1, 5)
+                if dice == 1:
+                    self.update_display(f"{self.display.get()}\n\nDu siehst dich im Wald um, außer Ästen und Bäumen "
+                                        f"findest du allerdings nichts.")
+                elif dice == 2:
+                    self.update_display(f"{self.display.get()}\n\nDu hörst Vögel zwitschern und siehst wie das Sonnenlicht"
+                                        f" durch die Baumkronen bricht. Mehr allerdings auch nicht.")
+                elif dice == 3:
+                    self.update_display(f"{self.display.get()}\n\nDie Äste knacken unter seinen Sohlen und dich durch "
+                                        f"das Unterholz zu bewegen fällt dir schwer.\nDeine Bemühungen brachten leider "
+                                        f"keinen Erfolg.")
+                elif dice == 4:
+                    self.update_display(f"{self.display.get()}\n\nDu trottest umher, ohne etwas zu finden.")
+                elif dice == 5:
+                    self.update_display(f"{self.display.get()}\n\nDu beobachtest wie eine Händlerkarawane durch den "
+                                        f"Wald fährt.\nDie Händler bemerken dich nicht und du hast kein Interesse "
+                                        f"daran auf dich aufmerksam zu machen.\nDie Händler passieren dich ohne weitere"
+                                        f" Vorkommnisse.")
+                else:
+                    self.update_display("Fehler bei Würfel.")
+                self.restore_location_buttons()
+            else:
+                self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
+                self.restore_location_buttons()
+        elif location == cave:
+            self.update_display("Dies ist ein Testevent für die Höhle. Hier ist noch nicht viel zu sehen.\n\n")
+            if dice <= 3:
+                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
+                self.restore_location_buttons()
+            elif 6 >= dice > 3:
+                #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
+                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
+                self.restore_location_buttons()
+            else:
+                self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
+                self.restore_location_buttons()
+        elif location == beach:
+            self.update_display("Dies ist ein Testevent für den Strand. Hier ist noch nicht viel zu sehen.\n\n")
+            if dice <= 3:
+                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
+                self.restore_location_buttons()
+            elif 6 >= dice > 3:
+                #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
+                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
+                self.restore_location_buttons()
+            else:
+                self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
+                self.restore_location_buttons()
 
 
 #Global Variables
