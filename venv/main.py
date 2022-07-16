@@ -9,44 +9,6 @@ import random
 class Monster:
    pass
 
-def battle(strg, dmg, defe):
-    if strg > dmg:
-        temp = strg
-        strg = dmg
-        dmg = temp
-
-    cal_dmg = random.randint(strg, dmg)
-    cal_dmg -= defe
-    print(f"Du hast: {cal_dmg} Schaden verursacht.\n")
-
-    if cal_dmg >= 0:
-        return cal_dmg
-    else:
-        return 0
-
-def result(ergebnis, monsterHP):
-    print(f"Das Monster hatte {monsterHP} Leben.")
-    monsterHP -= ergebnis
-    print(f"Das Monster hat nun: {monsterHP} Leben.\n")
-    return monsterHP
-
-def choose_location():
-    while True:
-        temp = input(
-            "Tippe 'Wald' um zum Wald zu gehen, 'Höhle' um zur Höhle zu gehen und 'Strand', um zum Strand zu gehen.\n")
-        if temp == "Wald":
-            location = forest
-            break
-        elif temp == "Höhle":
-            location = cave
-            break
-        elif temp == "Strand":
-            location = beach
-            break
-        else:
-            print("Versuche es nochmal. Achte auf die korrekte Schreibeweise.")
-            time.sleep(1)
-    return location
 
 
 
