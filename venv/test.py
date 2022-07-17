@@ -400,7 +400,7 @@ class MainGUI:
     def flee_confirmation(self):
         self.flee_confirmation_window = tkinter.Tk()
         ttk.Label(self.flee_confirmation_window, text="Beim Fliehen besteht eine 30%ige Chance, 10% der derzeitigen Lebenspunkte zu verlieren."
-                               "Möchtest du dennoch fliehen?").pack()
+                               " Möchtest du dennoch fliehen?").pack()
         ttk.Button(self.flee_confirmation_window, text="Fliehen", command=self.flee).pack()
         ttk.Button(self.flee_confirmation_window, text="Abbrechen", command=self.flee_confirmation_window.destroy).pack()
 
@@ -494,16 +494,16 @@ with open("Resources/Event_Forest_Neutral", "r", encoding="utf-8") as t:
     Events_Forest_Neutral = t.readlines()
     t.close()
 for i in Events_Forest_Neutral:
-    t = i.replace("\\n", "\n").rstrip("\n")
-    Events_Forest_Neutral.pop(0)
+    temp = Events_Forest_Neutral.pop(0)
+    t = temp.replace("\\n", "\n").rstrip("\n")
     Events_Forest_Neutral.append(t)
 
 with open("Resources/Monster_Types", "r", encoding="utf-8") as t:
     Monster_Types = t.readlines()
     t.close()
 for i in Monster_Types:
-    Monster_Types.append(i.replace("\n", ""))
-    Monster_Types.pop(0)
+    temp = Monster_Types.pop(0)
+    Monster_Types.append(temp.replace("\n", ""))
 
 with open("Resources/Monster_Names", "r", encoding="utf-8") as t:
     Monster_Names = t.readlines()
