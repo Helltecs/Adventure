@@ -1,2 +1,2 @@
 Um das Programm auszuführen ohne Python zu installieren, müssen zuerst die Dateien in dem Archiv in einen beliebigen Ordner entpackt werden.
-Die main.exe Datei muss anschließend in den GLEICHEN ORDNER wie der Rsource Ordner geschoben und von dort ausgeführt werden.
+Die main.exe Datei muss anschließend in den GLEICHEN ORDNER wie der "Resources" Ordner geschoben und von dort ausgeführt werden.
