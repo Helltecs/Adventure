@@ -107,6 +107,7 @@ class MainGUI:
         self.inventory_button_list = []
         self.variable_list = []
         self.forest_image = tkinter.PhotoImage(file="Resources/forest.png")
+        self.cave_image = tkinter.PhotoImage(file="Resources/cave.png")
 
         self.window = mainWindow
         self.window.geometry("900x450")
@@ -121,9 +122,9 @@ class MainGUI:
         self.location_frame.grid(column=1, row=1, sticky="n", columnspan=2)
 
         self.display = tkinter.StringVar()
-        self.display.set("Wilkommen, dies ist ein deutlich längerer String zum testen.")
-        self.label = ttk.Label(self.frame, textvariable=self.display, padding=1, image=self.forest_image,
-                               compound="center", foreground="white")
+        self.display.set("Wilkommen bei diesem kleinen Adventure!\nBitte starte ein neues Spiel oder setze einen alten"
+                         " Spielstand mit einem Klick auf 'Laden' fort.")
+        self.label = ttk.Label(self.frame, textvariable=self.display, padding=1)
         self.label.grid(column=0, row=0, sticky="nwe")
 
         self.displayInv = tkinter.StringVar()
@@ -241,6 +242,7 @@ class MainGUI:
         self.new_game_button.destroy()
 
         self.update_inventory()
+        self.change_location("forest") # Temporär NOCH zu modular ÄNDERN
 
         if self.first_load:
             self.first_load = False
@@ -297,8 +299,10 @@ class MainGUI:
         global location
         if goal == "forest":
             location = forest
+            self.label.configure(image=self.forest_image, compound="center", foreground="white")
         elif goal == "cave":
             location = cave
+            self.label.configure(image=self.cave_image, compound="center", foreground="black")
         elif goal == "beach":
             location = beach
         self.update_display(f"Du befindest dich {location}" + "\n\nWas möchtest du tun?")
@@ -337,9 +341,8 @@ class MainGUI:
                 self.flee_button.grid(column=1, row=0)
                 self.update_display(f"{self.display.get()}\n\nDu triffst auf {monster}. "
                                     f"{monster} ist ein {monster.type}.")
-            elif 6 >= dice > 3:
-                dice = random.randint(0, 4)
-                self.update_display(f"{Events_Forest_Neutral[dice]}")
+            elif 8 >= dice > 3:
+                self.update_display(f"{random.choice(Events_Forest_Neutral)}")
                 self.restore_location_buttons()
             else:
                 self.update_display(f"Du entdeckst ein Item oder ein sonstiges positives Event.")
@@ -349,7 +352,7 @@ class MainGUI:
             if dice <= 3:
                 self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
                 self.restore_location_buttons()
-            elif 6 >= dice > 3:
+            elif 8 >= dice > 3:
                 #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
                 self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
                 self.restore_location_buttons()
@@ -361,7 +364,7 @@ class MainGUI:
             if dice <= 3:
                 self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
                 self.restore_location_buttons()
-            elif 6 >= dice > 3:
+            elif 8 >= dice > 3:
                 #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
                 self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
                 self.restore_location_buttons()
@@ -370,8 +373,8 @@ class MainGUI:
                 self.restore_location_buttons()
 
     def fight(self):
-        dmg_to_monster, dmg_to_player = calculate_battle(player.strg, player.defe, player.equippedW,
-                                                         player.equippedW2, player.equippedA, monster.strg, monster.defe)
+        dmg_to_monster, dmg_to_player = calculate_battle(player.strg, player.defe, player.equippedW, player.equippedW2,
+                                                         player.equippedA, monster.strg, monster.defe)
         monster.hp -= dmg_to_monster
         player.hp -= dmg_to_player
 
@@ -397,8 +400,9 @@ class MainGUI:
 
     def flee_confirmation(self):
         self.flee_confirmation_window = tkinter.Tk()
-        ttk.Label(self.flee_confirmation_window, text="Beim Fliehen besteht eine 30%ige Chance, 10% der derzeitigen Lebenspunkte zu verlieren."
-                               " Möchtest du dennoch fliehen?").pack()
+        ttk.Label(self.flee_confirmation_window, text="Beim Fliehen besteht eine 30%ige Chance, 10% der"
+                                                      " derzeitigen Lebenspunkte zu verlieren."
+                                                      " Möchtest du dennoch fliehen?").pack()
         ttk.Button(self.flee_confirmation_window, text="Fliehen", command=self.flee).pack()
         ttk.Button(self.flee_confirmation_window, text="Abbrechen", command=self.flee_confirmation_window.destroy).pack()
 
