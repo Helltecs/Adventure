@@ -329,9 +329,8 @@ class MainGUI:
         dice = random.randint(1, 11)
 
         if location == forest:
-            self.update_display("Dies ist ein Testevent für den Wald. Hier ist noch nicht viel zu sehen.\n\n")
             if dice <= 3:
-                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner.")
+                self.update_display("Du triffst auf einen Gegner.")
                 global monster
                 monster = self.create_monster()
                 self.fight_button.grid(column=0, row=0)
@@ -339,12 +338,11 @@ class MainGUI:
                 self.update_display(f"{self.display.get()}\n\nDu triffst auf {monster}. "
                                     f"{monster} ist ein {monster.type}.")
             elif 6 >= dice > 3:
-                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
                 dice = random.randint(0, 4)
-                self.update_display(f"{self.display.get()}\n\n{Events_Forest_Neutral[dice]}")
+                self.update_display(f"{Events_Forest_Neutral[dice]}")
                 self.restore_location_buttons()
             else:
-                self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
+                self.update_display(f"Du entdeckst ein Item oder ein sonstiges positives Event.")
                 self.restore_location_buttons()
         elif location == cave:
             self.update_display("Dies ist ein Testevent für die Höhle. Hier ist noch nicht viel zu sehen.\n\n")
@@ -373,7 +371,7 @@ class MainGUI:
 
     def fight(self):
         dmg_to_monster, dmg_to_player = calculate_battle(player.strg, player.defe, player.equippedW,
-                                                         player.equippedW2, monster.strg, monster.defe)
+                                                         player.equippedW2, player.equippedA, monster.strg, monster.defe)
         monster.hp -= dmg_to_monster
         player.hp -= dmg_to_player
 
@@ -429,11 +427,12 @@ class MainGUI:
         StatusWindow()
 
 
-def calculate_battle(strg, defe, dmg, dmg2, monsterstrg, monsterdefe):
+def calculate_battle(strg, defe, dmg, dmg2, armor, monsterstrg, monsterdefe):
     # Player strength, weapon damage, monster defense
     try:
         dmg = dmg.dmg
         dmg2 = dmg2.dmg
+        armor = armor.defe
     except AttributeError:
         try:
             dmg = dmg.dmg
@@ -443,11 +442,17 @@ def calculate_battle(strg, defe, dmg, dmg2, monsterstrg, monsterdefe):
             dmg2 = dmg2.dmg
         except AttributeError:
             dmg2 = None
+        try:
+            armor = armor.defe
+        except AttributeError:
+            armor = None
 
     if type(dmg) is not int and type(dmg) is not float:
         dmg = 0
     if type(dmg2) is not int and type(dmg2) is not float:
         dmg2 = 0
+    if type(armor) is not int and type(armor) is not float:
+        armor = 0
 
     dmg += dmg2
 
@@ -458,7 +463,7 @@ def calculate_battle(strg, defe, dmg, dmg2, monsterstrg, monsterdefe):
 
     cal_dmg_to_monster = random.randint(strg, dmg)
     cal_dmg_to_monster -= monsterdefe
-    cal_dmg_to_player = monsterstrg - defe
+    cal_dmg_to_player = monsterstrg - (defe + armor)
 
     if cal_dmg_to_monster >= 0 and cal_dmg_to_player >= 0:
         return cal_dmg_to_monster, cal_dmg_to_player
