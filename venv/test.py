@@ -108,6 +108,7 @@ class MainGUI:
         self.variable_list = []
         self.forest_image = tkinter.PhotoImage(file="Resources/forest.png")
         self.cave_image = tkinter.PhotoImage(file="Resources/cave.png")
+        self.beach_image = tkinter.PhotoImage(file="Resources/beach.png")
 
         self.window = mainWindow
         self.window.geometry("900x450")
@@ -299,13 +300,17 @@ class MainGUI:
         global location
         if goal == "forest":
             location = forest
-            self.label.configure(image=self.forest_image, compound="center", foreground="white")
+            self.frame.configure(padding=0)
+            self.label.configure(image=self.forest_image, compound="center", foreground="white", padding=0)
         elif goal == "cave":
             location = cave
-            self.label.configure(image=self.cave_image, compound="center", foreground="black")
+            self.frame.configure(padding=0)
+            self.label.configure(image=self.cave_image, compound="center", foreground="black", padding=0)
         elif goal == "beach":
             location = beach
-        self.update_display(f"Du befindest dich {location}" + "\n\nWas möchtest du tun?")
+            self.frame.configure(padding=0)
+            self.label.configure(image=self.beach_image, compound="center", foreground="black", padding=0)
+        self.update_display(f"Du befindest dich {location}\n\nWas möchtest du tun?")
         self.choose_action()
 
     def choose_action(self):
@@ -330,12 +335,12 @@ class MainGUI:
         self.discover_button.grid_remove()
         self.nothing_button.grid_remove()
 
+        global monster
         dice = random.randint(1, 11)
 
         if location == forest:
             if dice <= 3:
                 self.update_display("Du triffst auf einen Gegner.")
-                global monster
                 monster = self.create_monster()
                 self.fight_button.grid(column=0, row=0)
                 self.flee_button.grid(column=1, row=0)
@@ -348,25 +353,29 @@ class MainGUI:
                 self.update_display(f"Du entdeckst ein Item oder ein sonstiges positives Event.")
                 self.restore_location_buttons()
         elif location == cave:
-            self.update_display("Dies ist ein Testevent für die Höhle. Hier ist noch nicht viel zu sehen.\n\n")
             if dice <= 3:
-                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
-                self.restore_location_buttons()
+                self.update_display("Du triffst auf einen Gegner.")
+                monster = self.create_monster()
+                self.fight_button.grid(column=0, row=0)
+                self.flee_button.grid(column=1, row=0)
+                self.update_display(f"{self.display.get()}\n\nDu triffst auf {monster}. "
+                                    f"{monster} ist ein {monster.type}.")
             elif 8 >= dice > 3:
-                #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
-                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
+                self.update_display(f"{random.choice(Events_Cave_Neutral)}")
                 self.restore_location_buttons()
             else:
                 self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
                 self.restore_location_buttons()
         elif location == beach:
-            self.update_display("Dies ist ein Testevent für den Strand. Hier ist noch nicht viel zu sehen.\n\n")
             if dice <= 3:
-                self.update_display(f"{self.display.get()}Du triffst auf einen Gegner (noch zu implementieren).")
-                self.restore_location_buttons()
+                self.update_display("Du triffst auf einen Gegner.")
+                monster = self.create_monster()
+                self.fight_button.grid(column=0, row=0)
+                self.flee_button.grid(column=1, row=0)
+                self.update_display(f"{self.display.get()}\n\nDu triffst auf {monster}. "
+                                    f"{monster} ist ein {monster.type}.")
             elif 8 >= dice > 3:
-                #TODO Event strings in Textdatei/Listen schreiben, aufruf über Index
-                self.update_display(f"{self.display.get()}Du hast nichts entdeckt bzw. neutrales Event.")
+                self.update_display(f"{random.choice(Events_Beach_Neutral)}")
                 self.restore_location_buttons()
             else:
                 self.update_display(f"{self.display.get()}Du entdeckst ein Item oder ein sonstiges positives Event.")
@@ -402,7 +411,7 @@ class MainGUI:
         self.flee_confirmation_window = tkinter.Tk()
         ttk.Label(self.flee_confirmation_window, text="Beim Fliehen besteht eine 30%ige Chance, 10% der"
                                                       " derzeitigen Lebenspunkte zu verlieren."
-                                                      " Möchtest du dennoch fliehen?").pack()
+                                                      " Möchtest du dennoch fliehen?", padding=10).pack()
         ttk.Button(self.flee_confirmation_window, text="Fliehen", command=self.flee).pack()
         ttk.Button(self.flee_confirmation_window, text="Abbrechen", command=self.flee_confirmation_window.destroy).pack()
 
@@ -499,13 +508,29 @@ inventory = [dagger, tatters, testw1, testw2, testw3, testw4]
 gold = 0
 location = forest
 
-with open("Resources/Event_Forest_Neutral", "r", encoding="utf-8") as t:
+with open("Resources/Events_Forest_Neutral", "r", encoding="utf-8") as t:
     Events_Forest_Neutral = t.readlines()
     t.close()
 for i in Events_Forest_Neutral:
     temp = Events_Forest_Neutral.pop(0)
     t = temp.replace("\\n", "\n").rstrip("\n")
     Events_Forest_Neutral.append(t)
+
+with open("Resources/Events_Cave_Neutral", "r", encoding="utf-8") as t:
+    Events_Cave_Neutral = t.readlines()
+    t.close()
+for i in Events_Cave_Neutral:
+    temp = Events_Cave_Neutral.pop(0)
+    t = temp.replace("\\n", "\n").rstrip("\n")
+    Events_Cave_Neutral.append(t)
+
+with open("Resources/Events_Beach_Neutral", "r", encoding="utf-8") as t:
+    Events_Beach_Neutral = t.readlines()
+    t.close()
+for i in Events_Beach_Neutral:
+    temp = Events_Beach_Neutral.pop(0)
+    t = temp.replace("\\n", "\n").rstrip("\n")
+    Events_Beach_Neutral.append(t)
 
 with open("Resources/Monster_Types", "r", encoding="utf-8") as t:
     Monster_Types = t.readlines()
